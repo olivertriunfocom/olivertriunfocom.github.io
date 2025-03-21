@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Redirecting...</title>
+  </head>
+  <body>
+    <script>
+      // Single Page Apps for GitHub Pages
+      // MIT License
+      // https://github.com/rafgraph/spa-github-pages
+      var pathSegmentsToKeep = 0;
+      var l = window.location;
+      var r = l.pathname.split('/');
+      var d = l.href.split('/');
+      var i = d.length - 1;
+      var j = r.length - 1;
+      var k = j - pathSegmentsToKeep;
+      var m = i - pathSegmentsToKeep;
+      while (k > 0) {
+        d[m] = r[k];
+        k--;
+        m--;
+      }
+      var g = d.join('/');
+      var newPath = g.slice(0, g.lastIndexOf('/'));
+      window.location.replace(newPath + '/');
+    </script>
+  </body>
+</html> 
