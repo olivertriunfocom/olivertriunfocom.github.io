@@ -3,20 +3,32 @@
   <head>
     <meta charset="UTF-8" />
     <title>Clerk + Cloudflare Test</title>
+
+    <!-- Required: Set frontend API so Clerk knows your app -->
+    <script>
+      window.Clerk = window.Clerk || {};
+      window.Clerk.frontendApi = "clerk.olivertriunfo.com"; // ← Replace with your actual Frontend API
+    </script>
+
+    <!-- Load Clerk -->
     <script
       async
       crossorigin="anonymous"
       data-clerk-publishable-key="pk_live_Y2xlcmsub2xpdmVydHJpdW5mby5jb20k"
       src="https://accounts.clerk.dev/npm/@clerk/clerk-js@4/dist/clerk.browser.js"
     ></script>
+
+    <!-- Wait for Clerk to load before using it -->
     <script>
-      window.addEventListener("load", async function () {
+      window.addEventListener("clerk:loaded", async () => {
         await Clerk.load();
       });
     </script>
   </head>
   <body>
     <h1>Clerk + Cloudflare Test</h1>
+
+    <!-- This will render the Clerk sign-in component -->
     <clerk-sign-in></clerk-sign-in>
   </body>
 </html>
