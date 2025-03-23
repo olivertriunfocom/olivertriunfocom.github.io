@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <title>Clerk + Cloudflare Test</title>
 
-    <!-- Load Clerk.js from your custom Clerk domain -->
+    <!-- Load Clerk.js from your custom domain -->
     <script
       async
       crossorigin="anonymous"
@@ -13,32 +13,72 @@
       type="text/javascript"
     ></script>
 
-    <!-- Initialize Clerk when ready and add debug logs -->
-    <script>
-      window.addEventListener("clerk:ready", async () => {
-        console.log("✅ Clerk ready");
-        await Clerk.load();
-        console.log("✅ Clerk loaded");
-        Clerk.mountSignIn(document.getElementById("sign-in"));
-      });
-
-      window.addEventListener("clerk:loaded", () => {
-        console.log("ℹ️ clerk:loaded event fired");
-      });
-
-      window.addEventListener("clerk:signed-in", () => {
-        console.log("👤 User signed in");
-      });
-
-      window.addEventListener("clerk:sign-in-error", (e) => {
-        console.error("❌ Sign-in error", e.detail);
-      });
-    </script>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 2rem;
+      }
+      #user-profile {
+        margin-top: 2rem;
+      }
+    </style>
   </head>
   <body>
     <h1>Clerk + Cloudflare Test</h1>
 
-    <!-- Mount point for the Clerk sign-in widget -->
-    <div id="sign-in"></div>
+    <div id="user-profile"></div>
+
+    <script type="text/javascript">
+      window.addEventListener('clerk:ready', async () => {
+        console.log('✅ Clerk ready');
+
+        const pubKey = 'pk_live_Y2xlcmsub2xpdmVydHJpdW5mby5jb20k';
+        const clerk = new Clerk(pubKey);
+
+        await clerk.load();
+
+        const userProfileDiv = document.getElementById('user-profile');
+
+        clerk.mountUserProfile(userProfileDiv, {
+          customPages: [
+            {
+              url: 'custom-page',
+              label: 'Custom Page',
+              mountIcon: (el) => {
+                el.innerHTML = '👋';
+              },
+              unmountIcon: (el) => {
+                el.innerHTML = '';
+              },
+              mount: (el) => {
+                el.innerHTML = `
+                  <h2><b>Custom Page</b></h2>
+                  <p>This is the content of the custom page.</p>
+                `;
+              },
+              unmount: (el) => {
+                el.innerHTML = '';
+              },
+            },
+            {
+              url: '/other-page',
+              label: 'Other Page',
+              mountIcon: (el) => {
+                el.innerHTML = '🌐';
+              },
+              unmountIcon: (el) => {
+                el.innerHTML = '';
+              },
+              mount: (el) => {
+                el.innerHTML = `<p>This is /other-page</p>`;
+              },
+              unmount: (el) => {
+                el.innerHTML = '';
+              },
+            },
+          ],
+        });
+      });
+    </script>
   </body>
 </html>
