@@ -1,64 +1,64 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <title>Clerk GitHub Pages Test</title>
 
-    <!-- Set your Clerk frontend API -->
-    <script>
-      window.Clerk = window.Clerk || {};
-      window.Clerk.frontendApi = "clerk.olivertriunfo.com";
-    </script>
-
-    <!-- Load Clerk from your custom domain -->
+    <!-- Load Clerk.js from your custom Clerk domain -->
     <script
       async
       crossorigin="anonymous"
       data-clerk-publishable-key="pk_live_Y2xlcmsub2xpdmVydHJpdW5mby5jb20k"
       src="https://clerk.olivertriunfo.com/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
+      type="text/javascript"
     ></script>
 
     <script>
-  window.addEventListener('clerk:ready', async () => {
-    await Clerk.load();
-    const user = Clerk.user;
+      window.addEventListener("clerk:ready", async () => {
+        try {
+          await Clerk.load();
+          console.log("✅ Clerk loaded");
 
-    const status = document.getElementById('status');
-    if (user) {
-      status.innerText = `✅ Logged in as: ${user.fullName || user.emailAddresses[0].emailAddress}`;
-    } else {
-      status.innerText = "👋 Not logged in";
-      Clerk.mountSignIn(document.getElementById('sign-in'));
-    }
-  });
+          const user = Clerk.user;
+          const status = document.getElementById("status");
 
-  // Fallback if Clerk doesn't load
-  setTimeout(() => {
-    const status = document.getElementById('status');
-    if (status.innerText === 'Loading...') {
-      status.innerText = '❌ Clerk failed to load.';
-    }
-  }, 5000); // 5 seconds timeout
-</script>
+          if (user) {
+            status.innerText = `✅ Logged in as ${user.fullName || user.primaryEmailAddress.emailAddress}`;
+          } else {
+            status.innerText = "👋 Not signed in";
+            Clerk.mountSignIn(document.getElementById("sign-in"));
+          }
+        } catch (err) {
+          console.error("❌ Error loading Clerk:", err);
+          document.getElementById("status").innerText = "❌ Failed to load Clerk.";
+        }
+      });
 
+      window.addEventListener("clerk:loaded", () => {
+        console.log("ℹ️ clerk:loaded fired");
+      });
 
-    <style>
-      #sign-out {
-        margin-top: 20px;
-        padding: 8px 12px;
-        background-color: #ef4444;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        display: none;
-        cursor: pointer;
-      }
-    </style>
+      window.addEventListener("clerk:signed-in", () => {
+        console.log("👤 User signed in");
+        location.reload(); // Optional: refresh on sign-in
+      });
+
+      window.addEventListener("clerk:sign-in-error", (e) => {
+        console.error("❌ Sign-in error", e.detail);
+      });
+
+      // Fallback timeout
+      setTimeout(() => {
+        const status = document.getElementById("status");
+        if (status.innerText === "Loading...") {
+          status.innerText = "❌ Clerk is taking too long to load.";
+        }
+      }, 7000);
+    </script>
   </head>
   <body>
     <h1>Clerk GitHub Pages Test</h1>
     <p id="status">Loading...</p>
     <div id="sign-in"></div>
-    <button id="sign-out">Sign out</button>
   </body>
 </html>
