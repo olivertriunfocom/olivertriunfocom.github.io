@@ -4,31 +4,27 @@
     <meta charset="UTF-8" />
     <title>Clerk + Cloudflare Test</title>
 
-    <!-- Required: Set frontend API so Clerk knows your app -->
-    <script>
-      window.Clerk = window.Clerk || {};
-      window.Clerk.frontendApi = "clerk.olivertriunfo.com"; // ← Replace with your actual Frontend API
-    </script>
-
-    <!-- Load Clerk -->
+    <!-- Clerk.js from your custom Clerk domain -->
     <script
       async
       crossorigin="anonymous"
       data-clerk-publishable-key="pk_live_Y2xlcmsub2xpdmVydHJpdW5mby5jb20k"
-      src="https://accounts.clerk.dev/npm/@clerk/clerk-js@4/dist/clerk.browser.js"
+      src="https://clerk.olivertriunfo.com/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
+      type="text/javascript"
     ></script>
 
-    <!-- Wait for Clerk to load before using it -->
+    <!-- Initialize Clerk when ready -->
     <script>
-      window.addEventListener("clerk:loaded", async () => {
+      window.addEventListener("clerk:ready", async () => {
         await Clerk.load();
+        Clerk.mountSignIn(document.getElementById("sign-in"));
       });
     </script>
   </head>
   <body>
     <h1>Clerk + Cloudflare Test</h1>
 
-    <!-- This will render the Clerk sign-in component -->
-    <clerk-sign-in></clerk-sign-in>
+    <!-- Mount point for sign-in widget -->
+    <div id="sign-in"></div>
   </body>
 </html>
