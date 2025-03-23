@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Clerk User Info</title>
+  <script src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
+</head>
+<body>
+  <h1>Clerk Session Viewer</h1>
+
+  <div id="status">Loading...</div>
+  <pre id="userInfo"></pre>
+
+  <div id="authButtons" style="margin-top: 20px;">
+    <button id="signInBtn">Sign In</button>
+    <button id="signOutBtn" style="display:none;">Sign Out</button>
+  </div>
+
+  <script>
+    // Initialize Clerk
+    window.Clerk.load({
+      frontendApi: "clerk.olivertriunfo.com",
+      publishableKey: "pk_live_Y2xlcmsub2xpdmVydHJpdW5mby5jb20k"
+    }).then(async (Clerk) => {
+      await Clerk.mountSignInButton("#signInBtn", {
+        redirectUrl: window.location.href,
+      });
+
+      async function refreshUserInfo() {
+        const user = Clerk.user;
+        if (user) {
+          document.getElementById('status').textContent = "User is signed in:";
+          document.getElementById('userInfo').textContent = JSON.stringify({
+            id: user.id,
+            email: user.primaryEmailAddress?.emailAddress,
+            name: `${user.firstName || ''} ${user.lastName || ''}`.trim(),
+            username: user.username
+          }, null, 2);
+          document.getElementById('signOutBtn').style.display = "inline-block";
+          document.getElementById('signInBtn').style.display = "none";
+        } else {
+          document.getElementById('status').textContent = "No user is signed in.";
+          document.getElementById('userInfo').textContent = "";
+          document.getElementById('signOutBtn').style.display = "none";
+          document.getElementById('signInBtn').style.display = "inline-block";
+        }
+      }
+
+      Clerk.addListener(refreshUserInfo);
+      await Clerk.loadUser(); // fetches the user if session exists
+      await refreshUserInfo();
+
+      document.getElementById("signOutBtn").addEventListener("click", async () => {
+        await Clerk.signOut();
+        refreshUserInfo();
+      });
+
+    }).catch(err => {
+      document.getElementById('status').textContent = "Error loading Clerk:";
+      document.getElementById('userInfo').textContent = err.message;
+    });
+  </script>
+</body>
+</html>
