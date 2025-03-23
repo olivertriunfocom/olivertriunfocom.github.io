@@ -19,25 +19,28 @@
     ></script>
 
     <script>
-      window.addEventListener("clerk:ready", async () => {
-        await Clerk.load();
-        const user = Clerk.user;
+  window.addEventListener('clerk:ready', async () => {
+    await Clerk.load();
+    const user = Clerk.user;
 
-        const status = document.getElementById("status");
-        const signInDiv = document.getElementById("sign-in");
-        const signOutButton = document.getElementById("sign-out");
+    const status = document.getElementById('status');
+    if (user) {
+      status.innerText = `✅ Logged in as: ${user.fullName || user.emailAddresses[0].emailAddress}`;
+    } else {
+      status.innerText = "👋 Not logged in";
+      Clerk.mountSignIn(document.getElementById('sign-in'));
+    }
+  });
 
-        if (user) {
-          status.innerText = `✅ Logged in as: ${user.fullName || user.emailAddresses[0].emailAddress}`;
-          signOutButton.style.display = "inline-block";
-        } else {
-          status.innerText = "👋 Not logged in";
-          Clerk.mountSignIn(signInDiv);
-        }
+  // Fallback if Clerk doesn't load
+  setTimeout(() => {
+    const status = document.getElementById('status');
+    if (status.innerText === 'Loading...') {
+      status.innerText = '❌ Clerk failed to load.';
+    }
+  }, 5000); // 5 seconds timeout
+</script>
 
-        signOutButton.addEventListener("click", () => Clerk.signOut());
-      });
-    </script>
 
     <style>
       #sign-out {
