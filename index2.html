@@ -4,7 +4,13 @@
     <meta charset="UTF-8" />
     <title>Clerk GitHub Pages Test</title>
 
-    <!-- Load Clerk.js from your custom Clerk domain -->
+    <!-- Set frontendApi before loading Clerk -->
+    <script>
+      window.Clerk = window.Clerk || {};
+      window.Clerk.frontendApi = "clerk.olivertriunfo.com";
+    </script>
+
+    <!-- Load Clerk.js -->
     <script
       async
       crossorigin="anonymous"
@@ -13,52 +19,22 @@
       type="text/javascript"
     ></script>
 
+    <!-- Initialize Clerk -->
     <script>
       window.addEventListener("clerk:ready", async () => {
+        console.log("✅ Clerk ready");
         try {
           await Clerk.load();
           console.log("✅ Clerk loaded");
-
-          const user = Clerk.user;
-          const status = document.getElementById("status");
-
-          if (user) {
-            status.innerText = `✅ Logged in as ${user.fullName || user.primaryEmailAddress.emailAddress}`;
-          } else {
-            status.innerText = "👋 Not signed in";
-            Clerk.mountSignIn(document.getElementById("sign-in"));
-          }
-        } catch (err) {
-          console.error("❌ Error loading Clerk:", err);
-          document.getElementById("status").innerText = "❌ Failed to load Clerk.";
+          Clerk.mountSignIn(document.getElementById("sign-in"));
+        } catch (e) {
+          console.error("❌ Clerk failed to initialize", e);
         }
       });
-
-      window.addEventListener("clerk:loaded", () => {
-        console.log("ℹ️ clerk:loaded fired");
-      });
-
-      window.addEventListener("clerk:signed-in", () => {
-        console.log("👤 User signed in");
-        location.reload(); // Optional: refresh on sign-in
-      });
-
-      window.addEventListener("clerk:sign-in-error", (e) => {
-        console.error("❌ Sign-in error", e.detail);
-      });
-
-      // Fallback timeout
-      setTimeout(() => {
-        const status = document.getElementById("status");
-        if (status.innerText === "Loading...") {
-          status.innerText = "❌ Clerk is taking too long to load.";
-        }
-      }, 7000);
     </script>
   </head>
   <body>
     <h1>Clerk GitHub Pages Test</h1>
-    <p id="status">Loading...</p>
-    <div id="sign-in"></div>
+    <div id="sign-in">Loading Clerk sign-in...</div>
   </body>
 </html>
