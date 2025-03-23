@@ -4,13 +4,13 @@
     <meta charset="UTF-8" />
     <title>Clerk GitHub Pages Test</title>
 
-    <!-- Set frontendApi before loading Clerk -->
+    <!-- Clerk: Set frontend API for your custom domain -->
     <script>
       window.Clerk = window.Clerk || {};
       window.Clerk.frontendApi = "clerk.olivertriunfo.com";
     </script>
 
-    <!-- Load Clerk.js -->
+    <!-- Clerk: Load from your custom domain -->
     <script
       async
       crossorigin="anonymous"
@@ -19,22 +19,30 @@
       type="text/javascript"
     ></script>
 
-    <!-- Initialize Clerk -->
+    <!-- Clerk: Initialize and check status -->
     <script>
       window.addEventListener("clerk:ready", async () => {
-        console.log("✅ Clerk ready");
         try {
           await Clerk.load();
-          console.log("✅ Clerk loaded");
-          Clerk.mountSignIn(document.getElementById("sign-in"));
-        } catch (e) {
-          console.error("❌ Clerk failed to initialize", e);
+          const user = Clerk.user;
+          const statusEl = document.getElementById("status");
+
+          if (user) {
+            statusEl.textContent = `✅ Logged in as ${user.fullName || user.primaryEmailAddress.emailAddress}`;
+          } else {
+            statusEl.textContent = "❌ Not signed in";
+            Clerk.mountSignIn(document.getElementById("sign-in"));
+          }
+        } catch (err) {
+          console.error("Clerk failed to load", err);
+          document.getElementById("status").textContent = "❌ Clerk failed to load.";
         }
       });
     </script>
   </head>
   <body>
     <h1>Clerk GitHub Pages Test</h1>
-    <div id="sign-in">Loading Clerk sign-in...</div>
+    <p id="status">Loading...</p>
+    <div id="sign-in"></div>
   </body>
 </html>
