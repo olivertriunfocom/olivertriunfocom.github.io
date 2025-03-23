@@ -2,9 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Clerk + Cloudflare Test</title>
+    <title>Clerk Logged-In Check</title>
 
-    <!-- Load Clerk.js from your custom domain -->
+    <!-- Load Clerk.js from your custom Clerk domain -->
     <script
       async
       crossorigin="anonymous"
@@ -18,66 +18,24 @@
         font-family: sans-serif;
         padding: 2rem;
       }
-      #user-profile {
-        margin-top: 2rem;
-      }
     </style>
   </head>
   <body>
-    <h1>Clerk + Cloudflare Test</h1>
+    <h1>Clerk Login Status</h1>
+    <p id="status">Loading...</p>
 
-    <div id="user-profile"></div>
-
-    <script type="text/javascript">
+    <script>
       window.addEventListener('clerk:ready', async () => {
-        console.log('✅ Clerk ready');
+        await Clerk.load();
 
-        const pubKey = 'pk_live_Y2xlcmsub2xpdmVydHJpdW5mby5jb20k';
-        const clerk = new Clerk(pubKey);
+        const user = await Clerk.user;
 
-        await clerk.load();
-
-        const userProfileDiv = document.getElementById('user-profile');
-
-        clerk.mountUserProfile(userProfileDiv, {
-          customPages: [
-            {
-              url: 'custom-page',
-              label: 'Custom Page',
-              mountIcon: (el) => {
-                el.innerHTML = '👋';
-              },
-              unmountIcon: (el) => {
-                el.innerHTML = '';
-              },
-              mount: (el) => {
-                el.innerHTML = `
-                  <h2><b>Custom Page</b></h2>
-                  <p>This is the content of the custom page.</p>
-                `;
-              },
-              unmount: (el) => {
-                el.innerHTML = '';
-              },
-            },
-            {
-              url: '/other-page',
-              label: 'Other Page',
-              mountIcon: (el) => {
-                el.innerHTML = '🌐';
-              },
-              unmountIcon: (el) => {
-                el.innerHTML = '';
-              },
-              mount: (el) => {
-                el.innerHTML = `<p>This is /other-page</p>`;
-              },
-              unmount: (el) => {
-                el.innerHTML = '';
-              },
-            },
-          ],
-        });
+        const statusEl = document.getElementById('status');
+        if (user) {
+          statusEl.textContent = `✅ Logged in as ${user.firstName || 'a user'}`;
+        } else {
+          statusEl.textContent = '🚫 Not signed in';
+        }
       });
     </script>
   </body>
