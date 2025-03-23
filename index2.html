@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <title>Clerk + Cloudflare Test</title>
 
-    <!-- Clerk.js from your custom Clerk domain -->
+    <!-- Load Clerk.js from your custom Clerk domain -->
     <script
       async
       crossorigin="anonymous"
@@ -13,18 +13,32 @@
       type="text/javascript"
     ></script>
 
-    <!-- Initialize Clerk when ready -->
+    <!-- Initialize Clerk when ready and add debug logs -->
     <script>
       window.addEventListener("clerk:ready", async () => {
+        console.log("✅ Clerk ready");
         await Clerk.load();
+        console.log("✅ Clerk loaded");
         Clerk.mountSignIn(document.getElementById("sign-in"));
+      });
+
+      window.addEventListener("clerk:loaded", () => {
+        console.log("ℹ️ clerk:loaded event fired");
+      });
+
+      window.addEventListener("clerk:signed-in", () => {
+        console.log("👤 User signed in");
+      });
+
+      window.addEventListener("clerk:sign-in-error", (e) => {
+        console.error("❌ Sign-in error", e.detail);
       });
     </script>
   </head>
   <body>
     <h1>Clerk + Cloudflare Test</h1>
 
-    <!-- Mount point for sign-in widget -->
+    <!-- Mount point for the Clerk sign-in widget -->
     <div id="sign-in"></div>
   </body>
 </html>
